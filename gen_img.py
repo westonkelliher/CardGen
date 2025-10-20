@@ -47,15 +47,15 @@ class creature_spec:
         power_addon = ""
         but_version = ""
         if self.evolve_form == "apprentice":
-            power_addon = "(this is an adolescent, mundane version of the creature described)"
+            power_addon = "(this is an adolescent version of the creature described)"
             but_version = "but make it an adolescent and more mundane than the original description"
             environment_type = "natural environment with a "+full_element+" theme"
         elif self.evolve_form == "journeyman":
-            power_addon = "(this is a single-evolved, medium strength creature)"
+            power_addon = "(this is a medium strength version of the creature described)"
             but_version = ""
             environment_type = "natural environment with a "+full_element+" theme"
         elif self.evolve_form == "expert":
-            power_addon = "(this is a super-powerful, highly evolved form of the creature described)"
+            power_addon = "(this is a powerful form of the creature described)"
             but_version = "but make it more evolved, exagerated, and powerful than the original description"
             environment_type = " a "+full_element+" environment"                     
         elif self.evolve_form == "final form":
