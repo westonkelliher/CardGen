@@ -45,18 +45,23 @@ class creature_spec:
         # environment description
         environment_type = "natural environment"
         power_addon = ""
+        but_version = ""
         if self.evolve_form == "apprentice":
-            power_addon = "(this is a weak creature with a very simple design)"
+            power_addon = "(this is an adolescent, mundane version of the creature described)"
+            but_version = "but make it an adolescent and more mundane than the original description"
             environment_type = "natural environment with a "+full_element+" theme"
         elif self.evolve_form == "journeyman":
-            power_addon = "(this is a fairly simple creature)"
+            power_addon = "(this is a single-evolved, medium strength creature)"
+            but_version = ""
             environment_type = "natural environment with a "+full_element+" theme"
         elif self.evolve_form == "expert":
-            power_addon = "(this is a decently strong creature)"
+            power_addon = "(this is a super-powerful, highly evolved form of the creature described)"
+            but_version = "but make it more evolved, exagerated, and powerful than the original description"
             environment_type = " a "+full_element+" environment"                     
         elif self.evolve_form == "final form":
             # power_addon = "(this is a powerful creature)"
-            environment_type = " a "+full_element+" environment"            
+            environment_type = " a "+full_element+" environment"         
+        ####    
         description = self.general_description
         if evo == 1:
             description = self.evo1_description
@@ -70,7 +75,7 @@ class creature_spec:
         return (
             "Creature description: "+description+".  " +
             "With power level: " +self.evolve_form+" "+power_addon+".  " +
-            "Create character art for the creature in a pokemon-windwaker style.  " +
+            "Create character art for the creature in a pokemon-windwaker style with a simple design ("+but_version+").  " +
             "The background should be a non-distracting "+environment_type+".  " +
             "Produce only the image without adornment."
             )
@@ -85,22 +90,7 @@ class creature_spec:
             element_strength = "very slight "
         elif self.evolve_form == "journeyman":
             element_strength = "little bit of a "
-        element_str = element_strength + full_element
-        # environment description
-        environment_type = "natural environment"
-        power_addon = ""
-        if self.evolve_form == "apprentice":
-            power_addon = "(this is a weak creature with a very simple design)"
-            environment_type = "natural environment with a "+full_element+" theme"
-        elif self.evolve_form == "journeyman":
-            power_addon = "(this is a fairly simple creature)"
-            environment_type = "natural environment with a "+full_element+" theme"
-        elif self.evolve_form == "expert":
-            power_addon = "(this is a decently strong creature)"
-            environment_type = " a "+full_element+" environment"                     
-        elif self.evolve_form == "final form":
-            # power_addon = "(this is a powerful creature)"
-            environment_type = " a "+full_element+" environment"            
+        element_str = element_strength + full_element   
         
         # full prompt
         return (
@@ -110,7 +100,7 @@ class creature_spec:
             "Descriptive adjective (can be used for patterns or features or vibe or just discarded): " +self.adjective+".\n" +
             "Elemental type of the creature: "+full_element+".\n" +
             "Describe the shape of the creature / parts of the creatures body. Describe its physically defining characteristic(s). Define the surface texture/features of its body.\n" +
-            "The description should be two to three sentences long. Avoid embellishments and and adjectives unrelated to the physical characteristics of the body."
+            "The description should be two sentences long. Avoid embellishments and and adjectives unrelated to the physical characteristics of the body."
             "Output only the description and nothing else."
             )
 
@@ -214,6 +204,7 @@ def generate_base_creature_spec():
 
 def create_image(spec, evo=0):
     prompt = spec.draw_me_prompt(evo)
+    print(prompt+"\n=============\n")
 
     response = client.models.generate_content(
         model="gemini-2.5-flash-image",
