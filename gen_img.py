@@ -95,20 +95,26 @@ class creature_spec:
         
         # full prompt
         return (
-            "Your task is to describe a creature's physical characteristics in two sentences. The creature's inspirations are:\n"
+            "Your task is to describe the physical characteristics of a creature and its three evolutions. The creature's inspirations are:\n"
             "General body inspired by: "+self.animal1+".\n" +
             "Characterizing features inspired by: "+self.animal2+".\n" +
             "Descriptive adjective (can be used for patterns or features or vibe or just discarded): " +self.adjective+".\n" +
             "Elemental type of the creature: "+full_element+".\n" +
-            "Describe the shape of the creature / parts of the creatures body. Describe its physical defining characteristic(s). Define the surface features of its body.\n" +
+            "Describe the shape of the creature / parts of the creatures body. Describe its physically defining characteristic(s). Define the surface features of its body.\n" +
+            "You will do this three times, producing three different descriptions that are very similar to each other. "+
+            "The first description should be of the pre-evolved, weak form of the creature. This should be a slightly more mundane description. "+
+            "The second description should be of the creature after its first evolution. This should be a medium power creature with more prominent defining features. "+
+            "The third description should be final form of the creature. This should be a powerful creature with very prominent defining features. "+
+            "All threee forms should be roughly similar size.\n"+
+            "Each description should be two sentences long and they should be separated by two newlines."
             "Avoid any embelishment and avoid any adjectives that are unrelated to the creature's physical appearance.\n" +
-            "Output only the description and nothing else."
+            "Output only the descriptions and nothing else."
             )
 
     def build_general_description(self):
         describe_prompt = self.describe_me_prompt()
         response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
+            model="gemini-2.5-flash",
             contents=describe_prompt
         )
         self.general_description = response.text
@@ -135,19 +141,29 @@ class creature_spec:
         pre_evo_prompt = (
             "Your task is to modify a creature description slightly to make it more weak and mundane.\n"+
             "For example the following description:\n"+
-            '"This creature possesses a massive, barrel-shaped body reminiscent of a mastodon, with spindly, segmented legs supporting its weight. Its most striking feature is a plume of fiery plumes erupting from its spine, mirroring the elegant, upright neck of an egret, while its hide is a cracked, obsidian-like surface that smolders with internal heat."\n'+
+            '"This creature possesses a slender, bird-like body with broad, dark wings and a heavy, ursine head. Its dense, shadowed fur is interspersed with a mottling of ash-grey, giving its ancient form a texture like weathered stone."\n'+
             "Would be modified to:\n"+
-            '"This creature possesses a barrel-shaped body reminiscent of a small mastodon, with spindly, segmented legs supporting its weight. It has fiery plumes coming from its spine, mirroring the neck of an egret, while its hide is a cracked, obsidian-like surface."\n'+
+            '"This creature possesses a somewhat slender, bird-like body with broad, dark wings and a vaguely ursine head. Its dark fur is interspersed with a mottling of ash-grey, giving its form a somewhat stony texture."\n'+
             "Now that you have an example please update the following description:\n"+
             general+"\n"+
             "Output only the modified description and nothing else."
         )
+        post_evo_prompt = (
+            "Your task is to modify a creature description slightly to make it stronger, more elemental, and more exagerated.\n"+
+            "For example the following description:\n"+
+            '"This creature possesses a slender, bird-like body with broad, dark wings and a heavy, ursine head. Its dense, shadowed fur is interspersed with a mottling of ash-grey, giving its ancient form a texture like weathered stone."\n'+
+            "Would be modified to:\n"+
+            '"This creature possesses a very slender, bird-like body with broad, shadow-wrought wings and a heavy, ursine head. Its body is covered in ash-ridden, petrified fur giving its ancient form a texture like weathered stone."\n'+
+            "Now that you have an example please update the following description:\n"+
+            general+"\n"+
+            "Do not go overboard with adjecetives. Output only the modified description and nothing else."
+        )
         pre_evo_response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
+            model="gemini-2.5-flash",
             contents=pre_evo_prompt
         )
         post_evo_response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
+            model="gemini-2.5-flash",
             contents=post_evo_prompt
         )
         self.evo1_description = pre_evo_response.text
@@ -213,10 +229,12 @@ def create_evolution_image_set(spec):
 # main
 
 spec = generate_base_creature_spec()
-spec.build_evo_descriptions()
-print(spec.evo1_description+"\n\n")
-print(spec.evo2_description+"\n\n")
-print(spec.evo3_description+"\n\n")
+spec.build_general_description()
+print(spec.general_description)
+# spec.build_evo_descriptions()
+# print(spec.evo1_description+"\n\n")
+# print(spec.evo2_description+"\n\n")
+# print(spec.evo3_description+"\n\n")
 # print(spec.get_general_description())
 # print(spec.get_general_description())
 # spec.evolve_form = "expert"
