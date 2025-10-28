@@ -3,12 +3,14 @@ from google.genai import types
 from PIL import Image
 from io import BytesIO
 import random
+import os # Nick added 10/26 - env variable access 
 #
 from categories import power_levels, base_aspects, sub_aspects, animals, adjectives
 
-client = genai.Client()
+# Nick added 10/26 - API key from env variable
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
-gemini_language_model = "gemini-2.5-flash"
+gemini_language_model = "gemini-2.5-flash-lite"  # Changed to lite
 
 test_prompt = (
     "Creature description: An eel-like moose-inspired animal with a fire/lava aspect. " +
@@ -30,6 +32,9 @@ class creature_spec:
         self.evo1_description = None
         self.evo2_description = None
         self.evo3_description = None
+        self.evo1_stats = None # Nick added 10/26
+        self.evo2_stats = None # Nick added 10/26 
+        self.evo3_stats = None # Nick added 10/26
 
     def draw_me_prompt(self, evo=0):
         full_element = self.element
@@ -206,6 +211,10 @@ def create_image(spec, evo=0):
     prompt = spec.draw_me_prompt(evo)
     print(prompt+"\n=============\n")
 
+    # Nick Added 10/26 TESTING FUNCTIONALITY
+    creature_stats(spec, prompt) # TESTING TESTING TESTING ################################################
+
+
     response = client.models.generate_content(
         model="gemini-2.5-flash-image",
         contents=[prompt],
@@ -220,7 +229,7 @@ def create_image(spec, evo=0):
 
 
 
-def create_evolution_image_set(spec):
+def create_evolution_image_set(spec): # not used?
     spec.build_evo_descriptions()
     spec.evolve_form = "apprentice"
     create_image(spec, 1)
@@ -235,7 +244,7 @@ def create_evolution_image_set(spec):
     # create_image(spec)
 
 
-def create_image_set(spec):
+def create_image_set(spec): 
     spec.build_description()
     print(spec.general_description)
     spec.evolve_form = "apprentice"
@@ -247,10 +256,69 @@ def create_image_set(spec):
     spec.evolve_form = "expert"
     create_image(spec)
 
+
+#Nick added 10/26
+def creature_stats(spec, prompt):
+
+#todos:
+    # RANDOM STAT
+    # Create categories list of possible ability types to plug into prompt (damage,buff,debuff,summon,heal,control, etc)
+    # random chance of having a trample, first strike, etc
+    # progress stats with evolutions (keeping track of previous stats to build on)
+
+    stat_prompt_test = (
+        "From the given creature description below, create two abilities that fit the creature's theme and attributes, where each ability has a set mana cost (0-10). " +
+        "The stronger the ability, the higher the mana cost." +
+        "Set the creature's Health from (1-10), Mana Cost to activate (0-10), and Attack (1-10). " +
+        "There is a chance the creature has a passive ability, if so include it, only if it makes logical sense. Possible passive abilities include: \n" +
+        "Trample (extra damage leftover from an attack carries to next opponent), First Strike (attack first in combat), Regenerate (heals a small amount each turn), " +
+        ",Swift (can attack twice in one turn), Flying (can only be attacked if another creature has flying)." +
+        prompt #incorporate evo description into prompt
+    )
+
+    response = client.models.generate_content(
+            model=gemini_language_model,
+            contents=[stat_prompt_test]
+        )
+    
+    response_text = None
+     # Try direct text field first
+    if getattr(response, "text", None):
+        response_text = response.text
+
+    # Otherwise, extract from content parts
+    elif hasattr(response, "candidates") and response.candidates:
+        parts = getattr(response.candidates[0].content, "parts", [])
+        if parts:
+            response_text = "".join([
+                getattr(p, "text", "") or "" for p in parts
+            ]).strip()
+    
+
+
+    # Populate evo stats
+    if spec.evolve_form == "apprentice":
+        spec.evo1_stats = response_text
+        print("\nCreature Stats and Abilities:\n"+spec.evo1_stats+"\n=============\n")
+    elif spec.evolve_form == "journeyman":
+        spec.evo2_stats = response_text
+        print("\nCreature Stats and Abilities:\n"+spec.evo2_stats+"\n=============\n")  
+    elif spec.evolve_form == "expert":
+        spec.evo3_stats = response_text
+        print("\nCreature Stats and Abilities:\n"+spec.evo3_stats+"\n=============\n")
+
+
+
+
+
 # main
 
 spec = generate_base_creature_spec()
-create_image_set(spec)
+create_image_set(spec) 
+
+
+
+
 
 # spec.build_evo_descriptions()
 # print(spec.evo1_description + "\n---\n")
