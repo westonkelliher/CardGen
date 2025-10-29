@@ -69,8 +69,6 @@ class creature_spec:
             description = self.evo2_description
         elif evo == 3:
             description = self.evo3_description
-
-
         # full prompt
         return (
             "Creature description: "+description+".  " +
@@ -79,6 +77,25 @@ class creature_spec:
             "The background should be a non-distracting "+environment_type+".  " +
             "Produce only the image without adornment."
             )
+
+    
+
+    def draw_three_prompt(self):
+        full_element = self.element
+        if self.sub_element != None:
+            full_element += "/"+self.sub_element
+        # environment description
+        environment_type = "natural environment"
+        description = self.general_description
+        # full prompt
+        return (
+            "Creature description: "+description+".  " +
+            "Create character art for the creature in a pokemon-windwaker style. The character art should be the three evolutions of this creature with the first evolution in the top left, the second evolution in the top right, and the third evolution in the bottom middle. " +
+            "The top left evolution should be a weaker adolescent. The bottom right evolution should be medium strength. The bottom evolution should be powerful with exagerated features and more complexity." +
+            "The background should be transparent." +
+            "draw only the creatures without text or adornment."
+            )
+
     
     def describe_me_prompt(self):
         full_element = self.element
@@ -90,8 +107,8 @@ class creature_spec:
             element_strength = "very slight "
         elif self.evolve_form == "journeyman":
             element_strength = "little bit of a "
-        element_str = element_strength + full_element   
-        
+        element_str = element_strength + full_element
+        description = self.general_description
         # full prompt
         return (
             "Your task is to describe the physical characteristics of a creature. The creature's inspirations are:\n"
@@ -100,7 +117,7 @@ class creature_spec:
             "Descriptive adjective (can be used for patterns or features or vibe or just discarded): " +self.adjective+".\n" +
             "Elemental type of the creature: "+full_element+".\n" +
             "Describe the shape of the creature / parts of the creatures body. Describe its physically defining characteristic(s). Define the surface texture/features of its body.\n" +
-            "The description should be two sentences long. Avoid embellishments and and adjectives unrelated to the physical characteristics of the body."
+            "The description should be one to two sentences long. Avoid embellishments and and adjectives unrelated to the physical characteristics of the body."
             "Output only the description and nothing else."
             )
 
@@ -218,6 +235,22 @@ def create_image(spec, evo=0):
             image = Image.open(BytesIO(part.inline_data.data))
             image.save("images/"+spec.get_name()+".png")
 
+            
+def create_triple_image(spec):
+    spec.build_description()
+    prompt = spec.draw_three_prompt()
+    print(prompt+"\n=============\n")
+    response = client.models.generate_content(
+        model="gemini-2.5-flash-image",
+        contents=[prompt],
+    )
+    for part in response.candidates[0].content.parts:
+        if part.text is not None:
+            print(part.text)
+        elif part.inline_data is not None:
+            image = Image.open(BytesIO(part.inline_data.data))
+            image.save("images/"+spec.get_name()+".png")
+    
 
 
 def create_evolution_image_set(spec):
@@ -250,7 +283,7 @@ def create_image_set(spec):
 # main
 
 spec = generate_base_creature_spec()
-create_image_set(spec)
+create_triple_image(spec)
 
 # spec.build_evo_descriptions()
 # print(spec.evo1_description + "\n---\n")
