@@ -112,13 +112,13 @@ class creature_spec:
             #" --- \n" + 
             "Create character art for the creature in a pokemon-windwaker style. " +
             "The character art should be the three different creatures representing the three pokemon evolutions. " +
-            "The first creature should be in the top left and face slightly left: a weak adolescent. " +
-            "The second creature should be in the top right and face slightly right: an evolved juvenile. " +
-            "The third creature should be in the bottom middle and face forward: an epic final evolution with exagerated features. " +
+            "The first creature should be in the top left: a weak adolescent. " +
+            "The second creature should be in the top right right: an adult. " +
+            "The third creature should be in the bottom middle: the epic final form. " +
             #"The top left evolution should be a weaker adolescent. The bottom right evolution should be medium strength. The bottom evolution should be powerful with exagerated features and more complexity." +
             "Each of the three should be visually distinct. NEVER repeat the same creature. " +
             "Keep the color pallete consistent. " + 
-            "The background should be transparent. " +
+            "The background should be transparent. " + 
             "Draw only the creatures without text or adornment."
             )
 
@@ -143,7 +143,7 @@ class creature_spec:
             "special feature: " +self.special_feature+".\n" +
             "Elemental type of the creature: "+full_element+".\n" +
             "Describe the shape of the creature / parts of the creatures body. Describe its physically defining characteristic(s). Define the surface texture/features of its body.\n" +
-            "The description should be two sentences long. Avoid embellishments and and adjectives unrelated to the physical characteristics of the body."
+            "The base description should be one to two sentences long. Then add one brief sentence to describe the additional feature or change for the 'final form' of the creature which should exagerate an existing theme. Avoid embellishments and and adjectives unrelated to the physical characteristics of the body. Your tone should be that of an angsty teen. \n" +
             "Output only the description and nothing else."
             )
 
