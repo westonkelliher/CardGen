@@ -22,12 +22,13 @@ test_prompt = (
 )
 
 class creature_spec:
-    def __init__(self, element: str, sub_element: str, animal1: str, animal2: str, special_feature: str, evolve_form: str):
+    def __init__(self, element: str, sub_element: str, animal1: str, animal2: str, special_feature: str, constraint: str, evolve_form: str):
         self.element = element
         self.sub_element = sub_element
         self.animal1 = animal1
         self.animal2 = animal2
         self.special_feature = special_feature
+        self.constraint = constraint
         self.evolve_form = evolve_form
         self.general_description = None
         self.evo1_description = None
@@ -42,6 +43,7 @@ class creature_spec:
         print(self.element + " " + str(self.sub_element))
         print(self.animal1 + " " + self.animal2)
         print(self.special_feature)
+        print(self.constraint)
         print("---")
         
         
@@ -113,8 +115,9 @@ class creature_spec:
             "Create character art for the creature in a pokemon-windwaker style. " +
             "The character art should be the three different creatures representing the three pokemon evolutions. " +
             "The first creature should be in the top left and face slightly left: a weak adolescent. " +
-            "The second creature should be in the top right and face slightly right: an evolved juvenile. " +
-            "The third creature should be in the bottom middle and face forward: an epic final evolution with exagerated features. " +
+            "The third creature should be in the bottom and face forward: an epic final evolution with exagerated features. " +
+            "The second creature should be in the top right and face slightly right: a medium ground between the first creature and the final form. " +
+
             #"The top left evolution should be a weaker adolescent. The bottom right evolution should be medium strength. The bottom evolution should be powerful with exagerated features and more complexity." +
             "Each of the three should be visually distinct. NEVER repeat the same creature. " +
             "Keep the color pallete consistent. " + 
@@ -141,6 +144,7 @@ class creature_spec:
             "General body inspired by: "+self.animal1+".\n" +
             "Characterizing features inspired by: "+self.animal2+".\n" +
             "special feature: " +self.special_feature+".\n" +
+            "constraint: " +self.constraint+".\n" +
             "Elemental type of the creature: "+full_element+".\n" +
             "Describe the shape of the creature / parts of the creatures body. Describe its physically defining characteristic(s). Define the surface texture/features of its body.\n" +
             "The description should be two sentences long. Avoid embellishments and and adjectives unrelated to the physical characteristics of the body."
@@ -241,9 +245,10 @@ def generate_base_creature_spec():
     animal2 = random.choice(animals)
     #adjective = random.choice(adjectives)
     special_feature = insp_phrase()
+    constraint = "none" #insp_phrase()    
     evolve_form = "base"
 
-    spec =  creature_spec(element, sub_element, animal1, animal2, special_feature, evolve_form)
+    spec =  creature_spec(element, sub_element, animal1, animal2, special_feature, constraint, evolve_form)
     spec.print_me()
     return spec
 
@@ -371,6 +376,9 @@ def creature_stats(spec, prompt):
 # main
 
 spec = generate_base_creature_spec()
+#spec.animal1 = "mermaid"
+spec.special_feature = "brazilian butt lift"
+#spec.constraint = "It has a feminine humanoid body"
 create_triple_image(spec)
 
 # spec.build_evo_descriptions()
