@@ -6,11 +6,12 @@ import random
 import os # Nick added 10/26 - env variable access 
 #
 from categories import power_levels, base_aspects, sub_aspects, animals, adjectives
+from build_phrases import insp_phrase
 
 # Nick added 10/26 - API key from env variable
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
-gemini_language_model = "gemini-2.5-flash-lite"  # Changed to lite
+gemini_language_model = "gemini-2.5-flash"  # Changed to lite
 
 test_prompt = (
     "Creature description: An eel-like moose-inspired animal with a fire/lava aspect. " +
@@ -21,12 +22,12 @@ test_prompt = (
 )
 
 class creature_spec:
-    def __init__(self, element: str, sub_element: str, animal1: str, animal2: str, adjective: str, evolve_form: str):
+    def __init__(self, element: str, sub_element: str, animal1: str, animal2: str, special_feature: str, evolve_form: str):
         self.element = element
         self.sub_element = sub_element
         self.animal1 = animal1
         self.animal2 = animal2
-        self.adjective = adjective
+        self.special_feature = special_feature
         self.evolve_form = evolve_form
         self.general_description = None
         self.evo1_description = None
@@ -36,6 +37,14 @@ class creature_spec:
         self.evo2_stats = None # Nick added 10/26 
         self.evo3_stats = None # Nick added 10/26
 
+    def print_me(self):
+        print("---")
+        print(self.element + " " + str(self.sub_element))
+        print(self.animal1 + " " + self.animal2)
+        print(self.special_feature)
+        print("---")
+        
+        
     def draw_me_prompt(self, evo=0):
         full_element = self.element
         if self.sub_element != None:
@@ -94,11 +103,23 @@ class creature_spec:
         description = self.general_description
         # full prompt
         return (
-            "Creature description: "+description+".  " +
-            "Create character art for the creature in a pokemon-windwaker style. The character art should be the three evolutions of this creature with the first evolution in the top left, the second evolution in the top right, and the third evolution in the bottom middle. " +
+            "Creature description: "+description+".  \n" +
+            #"Creature description: \n"+#description+".  " +
+            #"General body inspired by: "+self.animal1+".\n" +
+            #"Characterizing features inspired by: "+self.animal2+".\n" +
+            #"special feature: " +self.special_feature+".\n" +
+            #"Elemental type of the creature: "+full_element+".\n" +
+            #" --- \n" + 
+            "Create character art for the creature in a pokemon-windwaker style. " +
+            "The character art should be the three different creatures representing the three pokemon evolutions. " +
+            "The first creature should be in the top left and face slightly left: a weak adolescent. " +
+            "The second creature should be in the top right and face slightly right: an evolved juvenile. " +
+            "The third creature should be in the bottom middle and face forward: an epic final evolution with exagerated features. " +
             #"The top left evolution should be a weaker adolescent. The bottom right evolution should be medium strength. The bottom evolution should be powerful with exagerated features and more complexity." +
-            "The background should be transparent." +
-            "draw only the creatures without text or adornment."
+            "Each of the three should be visually distinct. NEVER repeat the same creature. " +
+            "Keep the color pallete consistent. " + 
+            "The background should be transparent. " +
+            "Draw only the creatures without text or adornment."
             )
 
     
@@ -119,10 +140,10 @@ class creature_spec:
             "Your task is to describe the physical characteristics of a creature. The creature's inspirations are:\n"
             "General body inspired by: "+self.animal1+".\n" +
             "Characterizing features inspired by: "+self.animal2+".\n" +
-            "Descriptive adjective (can be used for patterns or features or vibe or just discarded): " +self.adjective+".\n" +
+            "special feature: " +self.special_feature+".\n" +
             "Elemental type of the creature: "+full_element+".\n" +
             "Describe the shape of the creature / parts of the creatures body. Describe its physically defining characteristic(s). Define the surface texture/features of its body.\n" +
-            "The description should be one to two sentences long. Avoid embellishments and and adjectives unrelated to the physical characteristics of the body."
+            "The description should be two sentences long. Avoid embellishments and and adjectives unrelated to the physical characteristics of the body."
             "Output only the description and nothing else."
             )
 
@@ -218,10 +239,13 @@ def generate_base_creature_spec():
         sub_element = random.choice(sub_aspects.get(element))
     animal1 = random.choice(animals)
     animal2 = random.choice(animals)
-    adjective = random.choice(adjectives)
+    #adjective = random.choice(adjectives)
+    special_feature = insp_phrase()
     evolve_form = "base"
 
-    return creature_spec(element, sub_element, animal1, animal2, adjective, evolve_form)
+    spec =  creature_spec(element, sub_element, animal1, animal2, special_feature, evolve_form)
+    spec.print_me()
+    return spec
 
 
 def create_image(spec, evo=0):
