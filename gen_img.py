@@ -10,7 +10,7 @@ from categories import power_levels, base_aspects, sub_aspects, animals, adjecti
 # Nick added 10/26 - API key from env variable
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
-gemini_language_model = "gemini-2.5-flash-lite"  # Changed to lite
+gemini_language_model = "gemini-2.5-flash"  # Changed to lite
 
 test_prompt = (
     "Creature description: An eel-like moose-inspired animal with a fire/lava aspect. " +
@@ -266,14 +266,32 @@ def creature_stats(spec, prompt):
     # random chance of having a trample, first strike, etc
     # progress stats with evolutions (keeping track of previous stats to build on)
 
+
+    
     stat_prompt_test = (
         "From the given creature description below, create two abilities that fit the creature's theme and attributes, where each ability has a set mana cost (0-10). " +
-        "The stronger the ability, the higher the mana cost." +
-        "Set the creature's Health from (1-10), Mana Cost to activate (0-10), and Attack (1-10). " +
-        "There is a chance the creature has a passive ability, if so include it, only if it makes logical sense. Possible passive abilities include: \n" +
-        "Trample (extra damage leftover from an attack carries to next opponent), First Strike (attack first in combat), Regenerate (heals a small amount each turn), " +
-        ",Swift (can attack twice in one turn), Flying (can only be attacked if another creature has flying)." +
-        prompt #incorporate evo description into prompt
+        "The stronger the ability, the higher the mana cost. Set the creature's Health from (1-10), Mana Cost to activate (0-10), and Attack (1-10)." +
+        "Also, provide a name and short description (in two sentences) for the creature, specifically keeping in mind where it is in its evolution line (apprentice, journeyman, expert). " +
+        "Randomly decide whether to include a passive ability (roll a theoretical dice for a 1/6 chance), only if it makes logical sense depending on the creature's description." + 
+        "Possible passive abilities include: \n" +
+        "Trample (extra damage leftover from an attack carries to next opponent), First Resolve (attack first in combat), Regenerate (heals a small amount each turn), " +
+        "Swift (can attack twice in one turn), Flying (can only be attacked if another creature has flying), Last Resolve (always attacks last in combat)," +
+        "Hidden (played face down so the oppnonent does not know the creature stats until it attacks), Shapeshifter (when card is swapped out, gain a set amount of mana)" +
+        "Generate (produces mana using an attack), and Rush (can take an action the same turn as it's played). \n" +
+        "For more context on deciding Health, Attack, and Mana Cost: \n" +
+        "if the creature below is described as tough or strong, make sure to accurately display that in the Health and Attack, likewise if the description displays fragility" + ######
+        "" +  ######
+        prompt + "\n" + #incorporate evo description into prompt 
+        "Please format the response as follows: \n" +
+        "Creature Name: [Name]\n" +
+        "Creature Description: [Two sentence description]\n" +
+        "Health: X\n" +
+        "Mana Cost: X\n" + 
+        "Attack: X\n" +
+        "Ability 1: [Name] - [Description] (Mana Cost: X)\n" +
+        "Ability 2: [Name] - [Description] (Mana Cost: X)\n" +
+        "Passive Ability: [Name] - [Description] (if applicable, otherwise omit this line)\n"  ##########
+
     )
 
     response = client.models.generate_content(
