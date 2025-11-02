@@ -96,7 +96,7 @@ class creature_spec:
         return (
             "Creature description: "+description+".  " +
             "Create character art for the creature in a pokemon-windwaker style. The character art should be the three evolutions of this creature with the first evolution in the top left, the second evolution in the top right, and the third evolution in the bottom middle. " +
-            "The top left evolution should be a weaker adolescent. The bottom right evolution should be medium strength. The bottom evolution should be powerful with exagerated features and more complexity." +
+            #"The top left evolution should be a weaker adolescent. The bottom right evolution should be medium strength. The bottom evolution should be powerful with exagerated features and more complexity." +
             "The background should be transparent." +
             "draw only the creatures without text or adornment."
             )
