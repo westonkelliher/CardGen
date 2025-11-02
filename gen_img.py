@@ -51,11 +51,11 @@ class creature_spec:
             but_version = "but make it an adolescent and more mundane than the original description"
             environment_type = "natural environment with a "+full_element+" theme"
         elif self.evolve_form == "journeyman":
-            power_addon = "(this is a medium strength version of the creature described)"
+            power_addon = "(this is a medium-low strength version of the creature described)"
             but_version = ""
             environment_type = "natural environment with a "+full_element+" theme"
         elif self.evolve_form == "expert":
-            power_addon = "(this is a powerful form of the creature described)"
+            power_addon = "(this is a powerful exagerrated form of the creature described)"
             but_version = "but make it more evolved, exagerated, and powerful than the original description"
             environment_type = " a "+full_element+" environment"                     
         elif self.evolve_form == "final form":
@@ -91,8 +91,8 @@ class creature_spec:
         return (
             "Creature description: "+description+".  " +
             "Create character art for the creature in a pokemon-windwaker style. The character art should be the three evolutions of this creature with the first evolution in the top left, the second evolution in the top right, and the third evolution in the bottom middle. " +
-            "The top left evolution should be a weaker adolescent. The bottom right evolution should be medium strength. The bottom evolution should be powerful with exagerated features and more complexity." +
-            "The background should be transparent." +
+            "The top left evolution should be a weaker adolescent. The top right evolution should be medium strength. The bottom evolution should be powerful with exagerated features and more complexity." +
+            "The background should be plain white." +
             "draw only the creatures without text or adornment."
             )
 
